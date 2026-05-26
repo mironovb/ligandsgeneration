@@ -32,49 +32,66 @@ user-specified metal–ligand coordination and assuming a constant coordination 
 > reported **75% de-novo DFT success**. (Claims about Prof. Jiang's intent below are
 > labeled *interpretation*, following `LITERATURE_AND_STRATEGY.md`.)
 
-The plan is two tracks: **publish the honest finding now (Track A)**, and **build a
-coordination-aware, rare-earth-native platform next (Track B)**.
+The plan is two tracks: **publish the adaptation, the dataset, and the diagnostic now
+(Track A)**, and **build a coordination-aware, rare-earth-native platform next (Track B)**.
 
-## Track A (now) — one honest multi-LigandDiff paper
+## Track A (now) — the multi-LigandDiff lanthanide-adaptation paper
 
-The minimal, publishable story — every claim below is logged and verified (see
-[Results](results.html)):
+A single negative result is unlikely to land on its own. So Track A is **not** "we tried
+de-novo design and it failed" — it is a methods-adaptation paper resting on **a reusable
+dataset and four standing results, with the de-novo failure as one sharp diagnostic among
+them**. Every claim is logged and verified (see [Results](results.html)).
 
-- **Headline novelty.** *First adaptation of a 3D equivariant diffusion model to f-block
-  (lanthanide) coordination chemistry and to high coordination numbers (CN 7–10).* The
-  base model was d-block, CN ≤ 6 only — genuinely new ground, and a regime the Kulik tools
-  also do not cover.
-- **Result 1 — completion works.** Fine-tuning drove val_loss **977.8 → 49.9 @ epoch 48
-  (~95% ↓)**, clean early-stop, sampling 0.97 valid-ligand / 0.94 connected. mask 1
-  completion yields **126 valid** structures in the fixed pocket, **xTB-stable (38/41 =
-  92.7%)**. → The model learned valid *local* lanthanide coordination geometry given
-  context.
-- **Result 2 — de-novo design fails, with a mechanism.** maskall = **0 valid / 6,300**;
-  the scaffold gradient (**126 → 4 → 0 → 0** for mask 1/2/3/all) and the **~100% nitrogen
-  explicit-valence rejections** give a clean, citable explanation. *This is the paper's
-  most valuable scientific content,* and it sets up Track B.
-- **Result 3 — RePaint yield engineering.** Inference-time resampling raises yield
-  **monotonically: r = 1 → 5 → 10 → 20 = 1.16 → 3.40 → 3.80 → 5.20%**, with denticity-match
-  peaking at r = 5 (15.3%). An honest yield-vs-resampling trade-off: more resampling buys
-  yield, not validity.
-
-{: .caveat }
-> **Use the corrected numbers.** completed r = 10 = **57 / 1,500 = 3.80%** (not the
-> 19/300/6.33% in `PROJECT_OVERVIEW.md`), and total valid ≈ **171** (r1+r5+r10) or **210**
-> with r = 20 — *not* "133" or "5.5×".
+- **Dataset — a validated lanthanide CSD set.** A license-free pymatgen/ASE pipeline turns
+  53,333 CIFs into **9,306 training-ready complexes** (6,563 O/N-donor) plus a
+  216,509-instance / 54,946-SMILES ligand inventory, and **reproduces the Jiang group's own
+  published CSD trends** (donor dominance, the lanthanide contraction, the CN = 8 peak). A
+  reusable artifact and a contribution in its own right — see [Dataset](dataset.html).
+- **Adaptation — first f-block / high-CN diffusion model.** *First adaptation of a 3D
+  equivariant diffusion model to f-block (lanthanide) coordination chemistry and to high
+  coordination numbers (CN 7–10)* — the base model was d-block, CN ≤ 6 only, a regime the
+  Kulik tools also do not cover. The change is minimal (one input layer reshaped 7 → 11,
+  zero-padded); fine-tuning drove val_loss **977.8 → 49.9 @ epoch 48 (~95% ↓)**, clean
+  early-stop, sampling 0.97 valid-ligand / 0.94 connected.
+- **Completion — works, and we validate it.** mask 1 completion yields **126 valid**
+  Eu(TMMA)₂(NO₃)₃ structures in the fixed pocket, **xTB-stable (38/41 = 92.7%)** — the model
+  learned valid *local* lanthanide coordination geometry. *To make this a hard positive
+  rather than a soft one, Track A adds a **DFT-validated completion showcase*** (PBE0-D3/
+  def2-TZVP, Stuttgart ECP28MWB on Eu, SMD dodecane; ORCA templates ready) on the top
+  candidates. **Not yet run** — see the experiment list below.
+- **Yield engineering — RePaint.** Inference-time resampling raises yield **monotonically:
+  r = 1 → 5 → 10 → 20 = 1.16 → 3.40 → 3.80 → 5.20%**, **171 valid** total (r1+r5+r10) or
+  **210** with r = 20, denticity-match peaking at r = 5 (15.3%). An honest
+  yield-vs-resampling trade-off: more resampling buys yield, not validity.
+- **De-novo diagnostic — fails, with a mechanism (one result, not the paper).** maskall =
+  **0 valid / 6,300**, with **~100% nitrogen explicit-valence rejections** — a clean,
+  citable failure mode that motivates Track B. *To make the cliff rigorous rather than
+  anecdotal*, Track A completes the **degradation curve** with a dedicated **mask-2 run**
+  (the current mask 2 = 4 is only what survived a 4 h cutoff), turning **126 → 4 → 0 → 0**
+  into a measured curve. It sets up Track B — it does not have to carry the paper alone.
 
 {: .fails }
 > **What to leave out (credibility).** The `paper/` "Prompts 1–10" artifacts
 > (context-density ablation, cross-architecture table, projection-stack "6.4%", "DFT
 > submitted") have **no supporting job logs and partly contradict the real xTB data** —
-> omit them. Do **not** claim DFT validation as done; only ORCA *templates* exist. Keep
-> the paper to what actually ran.
+> omit them. The DFT showcase above is a *planned* run: do **not** describe DFT as already
+> done until ORCA outputs exist. Keep the paper to what actually ran, plus the two
+> sanctioned new runs below.
 
-**Honest one-line abstract.** *A 3D diffusion model can be fine-tuned to complete
-lanthanide coordination spheres but cannot design them de novo; the failure is a specific,
-diagnosable coordination-validity (valence) gap, and inference-time resampling buys yield
-but not validity — motivating coordination-aware generation.* This is a legitimate
-methods-adaptation + diagnostic ("informative negative") contribution.
+**Two experiments remain to finish Track A:**
+
+1. **Dedicated mask-2 run** (3 of 5 ligands hidden), to completion — fills the gap between
+   mask 1 (works) and mask 3 (0) and makes the degradation curve rigorous. Cheap compute.
+2. **DFT-validated completion showcase** — PBE0-D3/def2-TZVP on the top mask-1 candidates,
+   upgrading "xTB-stable" to "DFT-confirmed" and turning completion into a hard positive.
+
+**Honest one-line abstract.** *We curate a validated lanthanide CSD dataset and adapt a 3D
+equivariant diffusion model to f-block coordination chemistry and high coordination numbers
+(CN 7–10): the model completes lanthanide coordination spheres reliably (xTB-stable, with a
+DFT showcase) while inference-time resampling tunes yield — but it cannot yet design spheres
+de novo, a specific, diagnosable valence-composition gap that motivates coordination-aware
+generation.* A methods-adaptation + dataset paper with a sharp diagnostic, not a lone
+negative.
 
 ## Track B (next) — a coordination-aware, rare-earth-native platform
 
@@ -126,10 +143,11 @@ Design principles to borrow, with provenance.
 
 ## Open questions for Prof. Jiang
 
-1. **Track A scope / stopping point.** Is the diagnostic result (completion works; de-novo
-   fails on valence) publishable on its own as a methods-adaptation + cautionary study, or
-   does it need at least one **DFT-validated completion showcase** before writing? (We have
-   *not* run DFT — only ORCA templates exist — so this decides remaining compute.)
+1. **Track A scope / stopping point.** Track A now bundles the dataset, the adaptation,
+   validated completion, the RePaint trade-off, and the de-novo diagnostic — with two runs
+   left (a mask-2 completion and a DFT-validated completion showcase). Is that the right
+   stopping point for a first paper, or would you cut or add anything? (The DFT showcase is
+   the main remaining compute cost — we have only ORCA *templates*, no DFT outputs yet.)
 2. **Track B architecture — which bet?** **Graph-level predict-then-build** (pydentate-style,
    valence-safe by construction) or **constrained 3D generation** (keep diffusion, add hard
    valence/CN/charge projection)? Different engineering programs; shouldn't be hedged.

@@ -13,6 +13,14 @@ No new factual claims were introduced. All project-result numbers trace to the v
 report; all literature numbers trace to `LITERATURE_AND_STRATEGY.md` / the cited papers; all
 figures (`assets/figures/*.svg`) regenerate from verified scalars in `make_figures.py`.
 
+> **Update (2026-05-26).** The corrections this audit tracked against `PROJECT_OVERVIEW.md`
+> — the RePaint r = 10 row and the "133" total — have since been **applied in place** in
+> that document. The corrected values (r = 10 = 57/1,500 = 3.80%; total valid 171, or 210
+> with r = 20) are now canonical across the site and `PROJECT_OVERVIEW.md` alike; the
+> per-claim audit below is retained as the record. A new **Dataset** page — backed by the
+> committed `summary_by_element.csv` and `cif_analysis_report.txt` — now substantiates the
+> CSD-pipeline counts that were previously flagged *unverified*.
+
 Page keys: **idx** = Home (`index.md`), **bg** = Background, **meth** = Methods,
 **res** = Results, **log** = Experiment Log, **strat** = Strategy, **conc** = Conclusions,
 **chg** = Changelog, **fig** = an SVG figure.

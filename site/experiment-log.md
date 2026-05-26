@@ -7,8 +7,8 @@ nav_order: 5
 # Experiment log
 {: .no_toc }
 
-Every sbatch run, grouped by phase, rendered from `_data/experiments.yml`. All jobs ran
-under account `mit_general`; the `mit_preemptable` partition has a **4 h wall limit**, which is why
+Every sbatch run, grouped by phase, rendered from `_data/experiments.yml`. All jobs ran on
+a university HPC cluster; its preemptible partition has a **4 h wall limit**, which is why
 several long runs show `timed-out`. Dates are shown only where a log prints them (training
 and the sweep); they are left blank rather than guessed elsewhere.
 

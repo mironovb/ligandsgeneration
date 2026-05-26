@@ -16,8 +16,7 @@ nav_order: 4
 
 {: .note }
 > Every number on this page is traceable: footnotes cite the job id, log file, or metrics
-> file it came from. Where the values here **correct** `PROJECT_OVERVIEW.md` (the RePaint
-> r=10 row and the "total valid" count), that is called out explicitly.
+> file it came from.
 
 ## Training
 
@@ -85,14 +84,9 @@ aggregate available), not the 57 from the completed run.</small>
 **xTB stability.** Under GFN2-xTB optimization, **38/41 (92.7%)** of the mask1_baseline
 structures converged, and 81/85 of the r=5 set.[^xtb]
 
-{: .caveat }
-> **Two corrections to `PROJECT_OVERVIEW.md` (use the numbers here).**
-> 1. The completed **r = 10 run is 57 valid / 1,500 attempts = 3.80%** — *not* the
->    "19 valid / 300 attempts / 6.33% (5.5×)" in the overview. That "19" was a partial,
->    interrupted r=10 run; "300 attempts" and "6.33%" appear in no log.[^sweep]
-> 2. The headline **"133 valid structures" should be 171** (r1 + r5 + r10 = 29 + 85 + 57),
->    or **210 including r = 20**. The qualitative story is unchanged: yield rises
->    monotonically (1.16 → 3.40 → 3.80 → 5.20%) and denticity-match peaks at r = 5.
+Across the full sweep that is **171 valid structures** (r1 + r5 + r10 = 29 + 85 + 57), or
+**210** including r = 20. The story is the monotonic yield rise (1.16 → 3.40 → 3.80 →
+5.20%) with denticity-match peaking at r = 5.
 
 ## The metric caveat
 
@@ -197,9 +191,9 @@ explanation, and it directly motivates the [Strategy](strategy.html).
 [^sweep]: r=1 ("29 valid / 2500 attempted") and r=5 ("85 valid / 2500") from job
     `12329152`; r=10 ("Totally 57 valid", 1,500 attempts) and r=20 (39 valid / 750) from
     job `12340606`; directory `.xyz` counts corroborate. Denticity "Exact match" from
-    `metrics/results/aggregate_r{1,5,10}.txt`. The overview's r=10 = 19/300/6.33% traces
-    to a partial 19-structure aggregate; "300 attempts"/"6.33%" appear in no log
-    (VERIFICATION_REPORT.md §3, Discrepancy #1).
+    `metrics/results/aggregate_r{1,5,10}.txt`. The r=10 denticity aggregate covers only the
+    partial 19-structure set that was saved, not the full 57; the completed-run yield
+    (57/1,500 = 3.80%) is exact.
 
 [^xtb]: `xtb_results/mask1_baseline/summary.json` = 41 entries, 38 `xtb_success:true`
     (92.7%); `repaint_r5/summary.json` = 81/85.

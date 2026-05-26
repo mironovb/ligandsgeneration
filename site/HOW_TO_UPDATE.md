@@ -31,7 +31,7 @@ automatically in the right table on the **Experiment Log** page (tables are grou
 - job_id: "JOBID"                 # SLURM id(s); space-separate if several share one outcome
   sbatch: "path/to/script.sbatch" # the submission script
   job_name: "ln_xxx"              # SLURM -J name, or "" if not recorded
-  partition: "mit_preemptable"    # SLURM -p
+  partition: "preemptable"    # SLURM -p
   date: ""                        # "YYYY-MM-DD" only if the log prints it, else ""
   gpu_hours: ""                   # number only if a wall window / 4 h cap is logged, else ""
   phase: "generation"             # setup | training | generation | xtb | sweep | design | not-run
@@ -47,7 +47,7 @@ automatically in the right table on the **Experiment Log** page (tables are grou
 - job_id: "14400001"
   sbatch: "run_design_mask2.sbatch"
   job_name: "ln_mask2"
-  partition: "mit_preemptable"
+  partition: "preemptable"
   date: "2026-06-01"
   gpu_hours: 4.0
   phase: "design"
@@ -119,8 +119,8 @@ inspection), do **not** present it as fact. Wrap it in an unverified callout:
 (Available callouts, defined in `_config.yml`: `.note` `.works` `.caveat` `.unverified`
 `.fails`.)
 
-**Never** reintroduce a corrected number as if current — the two live corrections are
-r=10 = **57/1,500 = 3.80%** (not 19/300/6.33%) and total valid = **171/210** (not 133).
+**Never** reintroduce the superseded figures (19/300/6.33%, "5.5×", or "133"). The settled
+values are r=10 = **57/1,500 = 3.80%** and total valid = **171** (210 incl. r = 20).
 
 ---
 

@@ -43,6 +43,12 @@ This project takes a concrete first step: adapt the **multi-LigandDiff** diffusi
 the **high coordination numbers (CN 7–10)** lanthanides prefer — a regime no prior model,
 including the Kulik coordination-prediction tools, has covered.
 
+A first deliverable already exists independently of the model: a curated
+**[lanthanide CSD dataset](dataset.html)** of 9,306 training-ready complexes, built with a
+license-free pymatgen/ASE pipeline and **validated against the Jiang group's own published
+CSD analyses** (donor distributions, the lanthanide contraction, the CN = 8 peak all
+reproduce). It is the foundation everything below is trained on.
+
 ## The reference complex
 
 Every generation experiment in this project uses one well-characterized complex as its

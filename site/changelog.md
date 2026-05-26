@@ -11,6 +11,19 @@ nav_order: 8
 
 A running log of changes to this tracker. Newest first.
 
+- **2026-05-26** — **Dataset added; Track A broadened; numbers solidified; files
+  reorganized.** Added a **[Dataset](dataset.html)** page documenting the CSD curation
+  (53,333 CIFs → **9,306** training complexes, 6,563 O/N-only; 216,509 ligand instances /
+  54,946 unique SMILES), validated against the Jiang group's ICC 2025 / Sci. Rep. analyses
+  and backed by committed artifacts `assets/data/summary_by_element.csv` and
+  `assets/data/cif_analysis_report.txt`. **Track A** reframed from a single de-novo negative
+  into a five-part paper — dataset + first f-block/high-CN adaptation + validated completion
+  (with a planned DFT showcase) + RePaint yield + the de-novo diagnostic — with a mask-2 run
+  and a DFT-validated completion showcase as the two runs left to finish it. **Corrections
+  solidified in place:** `PROJECT_OVERVIEW.md` now carries r = 10 = **57/1,500 = 3.80%** and
+  total valid **171** (210 incl. r = 20); the "19/300/6.33% / 5.5× / 133" figures are gone,
+  not merely footnoted. Cluster identifiers genericized (no institution named). Repo
+  reorganized: internal docs → `reports/`, data artifacts → `site/assets/data/`.
 - **2026-05-26** — **Audit, hardening & living-tracker setup.** Re-checked every number
   against `VERIFICATION_REPORT.md` and produced `SITE_AUDIT.md` (each headline number →
   page → source). One framing fix: the Ln–donor distance (2.61 → 2.43 Å) on Strategy now

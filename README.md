@@ -11,11 +11,9 @@ _(published by GitHub Actions once Pages is enabled — see [Deployment](#deploy
 
 | Path | Contents |
 |---|---|
-| `site/` | The Jekyll ([just-the-docs](https://just-the-docs.com/)) documentation site — background, methods, results, experiment log, strategy, conclusions. **This is what gets published to Pages.** |
-| `PROJECT_OVERVIEW.md` | High-level overview of the project. |
-| `LITERATURE_AND_STRATEGY.md` | Literature review and research strategy. |
-| `SITE_AUDIT.md` | Audit of the site's claims for accuracy and provenance. |
-| `VERIFICATION_REPORT.md` | Verification of reported metrics against on-cluster job logs. |
+| `site/` | The Jekyll ([just-the-docs](https://just-the-docs.com/)) documentation site — background, **dataset**, methods, results, experiment log, strategy, conclusions. **This is what gets published to Pages.** |
+| `site/assets/data/` | Published data artifacts: `summary_by_element.csv` (per-element CSD breakdown for the 14 lanthanides) and `cif_analysis_report.txt` (the full curation report). |
+| `reports/` | Internal working documents (not published to the site): `PROJECT_OVERVIEW.md`, `LITERATURE_AND_STRATEGY.md`, `SITE_AUDIT.md`, `VERIFICATION_REPORT.md`, and `jiang_update_email.md`. |
 | `.github/workflows/pages.yml` | CI that builds `site/` and deploys it to GitHub Pages. |
 
 Kept **out** of the repo on purpose (see [`.gitignore`](.gitignore)): `prompts/` (local

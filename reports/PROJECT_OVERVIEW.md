@@ -169,6 +169,13 @@ which validated the home-built pipeline.
 extractant-relevant chemistries (amides, beta-diketones, phosphine oxides,
 phenanthroline derivatives) are all present.
 
+**Training-sample budget.** The 9,306 candidates (avg 4.6 ligands each, ~23 masking
+combinations per complex) form a pool of **~212,000** maskable training samples; the
+fine-tune in §6 drew **~85,760 per epoch** (335 steps × batch 256). A per-element
+breakdown — parse rates, CN distribution, average Ln–donor distance, training candidates,
+and ligand counts for all 14 lanthanides — is tabulated in `summary_by_element.csv`
+(published under the site's `assets/data/`).
+
 ---
 
 ## 5. Phase 2 — Adapting the model to lanthanides
@@ -198,8 +205,8 @@ ligand-group slots.
 
 ## 6. Phase 3 — Training
 
-- **Hardware:** single NVIDIA H200 (143 GB) on the MIT Engaging cluster, `mit_general`
-  account, `mit_preemptable` partition (4 h job limit, preemptible).
+- **Hardware:** single NVIDIA H200 (143 GB) on a university HPC cluster, on a
+  preemptible partition (4 h job limit).
 - **Fine-tuning from** the pretrained transition-metal checkpoint.
 - **Optimizer:** AdamW + cosine annealing. **Discriminative learning rates:** 1e-4 for
   the new input projection, 1e-5 for the pretrained GVP backbone (10x lower so the
@@ -241,10 +248,17 @@ via the `--resample_r` flag.
 |---|---|---|---|---|
 | Baseline (r = 1) | 2,500 | 29 | 1.16% | 13.8% |
 | RePaint r = 5 | 2,500 | 85 | 3.40% (2.9x) | **15.3% (best)** |
-| RePaint r = 10 | 300 | 19 | 6.33% (5.5x) | 10.5% |
-| **Total** | | **133** | | |
+| RePaint r = 10 | 1,500 | 57 | 3.80% | 10.5%† |
+| RePaint r = 20 | 750 | 39 | 5.20% | — |
+| **Total** | | **171** (r1+r5+r10); **210** incl. r = 20 | | |
 
-**Reading:** yield rises monotonically with r, but donor-placement quality
+† The r = 10 denticity-match (10.5%) was computed on a partial 19-structure aggregate (the
+only one saved), not the full 57; the completed-run yield (**57 / 1,500 = 3.80%**) is exact.
+The earlier "19 valid / 300 attempts / 6.33% (5.5×)" figure came from that interrupted
+partial run and is superseded by the completed `finish_sweep` job (12340606).
+
+**Reading:** yield rises monotonically with r (1.16 → 3.40 → 3.80 → 5.20%), but
+donor-placement quality
 (denticity-match rate) peaks at r = 5 and *drops* at r = 10. So **r = 5 is the working
 point** — past it you get more structures that clear the coarse validity filter but are
 not better at the fine-grained placement metric.
@@ -337,8 +351,8 @@ but the headline (maskall = 0/6300) is already conclusive.
 - Clean transfer from the transition-metal checkpoint: only one layer reshaped,
   ~10 GPU-hours of fine-tuning, 95% validation-loss reduction.
 - RePaint successfully ported; 2.9x yield lift at r = 5, which is the working point.
-- mask1 completion works: 133 valid Eu(TMMA)₂(NO₃)₃ structures, visually confirmed to
-  contain correctly-placed TMMA-shaped ligands.
+- mask1 completion works: 171 valid Eu(TMMA)₂(NO₃)₃ structures across the sweep (210
+  including r = 20), visually confirmed to contain correctly-placed TMMA-shaped ligands.
 
 **What does not work (yet):**
 
@@ -400,17 +414,17 @@ In rough priority order:
 
 - **Code:** `github.com/mironovb/multi_LigandDiff`, branch `ln-adaptation`.
 - **Checkpoint:** `models/ln_finetuned/ln_finetuned_epoch=48.ckpt`.
-- **Cluster:** MIT Engaging (`orcd-login.mit.edu`), account `mit_general`, partition
-  `mit_preemptable`, NVIDIA H200 GPUs.
+- **Cluster:** a university HPC cluster, preemptible partition, NVIDIA H200 GPUs.
 - **Environment:** `module load miniforge/25.11.0-0` then `conda activate ligdiff`.
 - **Key scripts:** `generate.py` (full / multi-mask generation), `generate_mask1.py`
   (single-ligand completion), `generate_design_test.py` (mask-size sweep for the design
   test), `analyze_gen.py` (per-structure coordination-sphere inspector), `xtb_opt.py`
   (xTB post-processing).
 - **Reference complex:** `eu_tmma_cis.xyz` (Eu(TMMA)₂(NO₃)₃, CCDC VEDTAA01).
-- **Structure bundle:** `report_2_ln_diffusion_2026-04-23.tgz` — 133 valid structures
-  (29 baseline + 85 r=5 + 19 r=10), pristine reference, figures, metrics files.
-- **Cluster caveats learned:** `mit_preemptable` has a 4 h wall limit; long sweeps must
+- **Structure bundle:** `report_2_ln_diffusion_2026-04-23.tgz` — 171 valid structures
+  (29 baseline + 85 r=5 + 57 r=10; 210 including 39 from r=20), pristine reference,
+  figures, metrics files.
+- **Cluster caveats learned:** the preemptible partition has a 4 h wall limit; long sweeps must
   put the most important experiment first. Avoid `set -euo pipefail` with `source
   ~/.bashrc` (the `nounset` flag trips on an unset variable in `/etc/bashrc`). Use
   `python -u` for unbuffered live logging.

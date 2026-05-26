@@ -40,6 +40,11 @@ the current model reaches, and exactly where it stops.
 
 <div style="display:flex; flex-wrap:wrap; gap:0.75rem; margin:1rem 0 1.5rem;">
   <div style="flex:1 1 220px; border:1px solid #e2e8f0; border-left:4px solid #16a34a; border-radius:6px; padding:0.7em 0.9em; background:#f8fafc;">
+    <div style="font-size:0.8em; text-transform:uppercase; letter-spacing:0.04em; color:#64748b;">Dataset</div>
+    <div style="font-weight:700; color:#16a34a; font-size:1.05em;">✓ curated</div>
+    <div style="margin-top:0.35em; font-size:0.92em;"><strong>9,306</strong> training complexes from 53,333 CIFs; trends match the Jiang CSD papers.</div>
+  </div>
+  <div style="flex:1 1 220px; border:1px solid #e2e8f0; border-left:4px solid #16a34a; border-radius:6px; padding:0.7em 0.9em; background:#f8fafc;">
     <div style="font-size:0.8em; text-transform:uppercase; letter-spacing:0.04em; color:#64748b;">Trained model</div>
     <div style="font-weight:700; color:#16a34a; font-size:1.05em;">✓ converged</div>
     <div style="margin-top:0.35em; font-size:0.92em;">Validation loss <strong>977.8 → 49.9</strong> (~95% ↓), best at epoch 48, clean early-stop.</div>
@@ -56,16 +61,17 @@ the current model reaches, and exactly where it stops.
   </div>
   <div style="flex:1 1 220px; border:1px solid #e2e8f0; border-left:4px solid #dc2626; border-radius:6px; padding:0.7em 0.9em; background:#fef2f2;">
     <div style="font-size:0.8em; text-transform:uppercase; letter-spacing:0.04em; color:#64748b;">De-novo design</div>
-    <div style="font-weight:700; color:#dc2626; font-size:1.05em;">✗ fails</div>
+    <div style="font-weight:700; color:#dc2626; font-size:1.05em;">diagnostic</div>
     <div style="margin-top:0.35em; font-size:0.92em;"><strong>0 valid / 6,300</strong> attempts from a bare Eu center.</div>
   </div>
 </div>
 
-**The one-sentence finding:** the fine-tuned model is a reliable *completion* tool — given
-a metal plus most of its ligands it fills in the missing one — but it is **not yet a
-*designer*:** asked to build a coordination sphere from the metal alone, its validity
-collapses to zero, and the failure is a specific, diagnosable coordination-validity
-(nitrogen-valence) gap.
+**The one-sentence story:** from a curated, CSD-validated lanthanide dataset (9,306
+complexes), a transition-metal diffusion model fine-tunes cleanly to the f-block and
+**reliably completes** lanthanide coordination spheres (xTB-stable) while RePaint tunes
+yield — and a **sharp diagnostic** shows it cannot *yet* design a sphere from the bare metal
+(0 / 6,300), a specific, fixable valence-composition gap that points to a coordination-aware
+platform.
 
 All numbers above are traceable to on-cluster job logs and metrics files; see
 [Results](results.html) for the per-experiment provenance and [Experiment
@@ -76,6 +82,7 @@ Log](experiment-log.html) for the full run table.
 | Page | What's there |
 |---|---|
 | [Background](background.html) | Why Ln separations matter, the objective, and the key papers (incl. the three Kulik papers). |
+| [Dataset](dataset.html) | The lanthanide CSD curation: 53k CIFs → 9,306 training complexes, validated against the Jiang group's CSD papers; per-element table + downloads. |
 | [Methods](methods.html) | The multi-LigandDiff architecture, the lanthanide adaptation, the data pipeline, and the training setup. |
 | [Results](results.html) | Training curve, RePaint sweep, the metric caveat, and the de-novo design test. |
 | [Experiment Log](experiment-log.html) | Every sbatch run: job id, partition, outcome, key result — the living tracker. |

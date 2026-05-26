@@ -11,22 +11,22 @@ nav_order: 7
 
 ## Current conclusion
 
-**In its current form the model is a completion tool, not a designer.** It reliably
-regenerates a single missing ligand when the rest of the complex is present — mask 1
-completion gives **126 valid** Eu(TMMA)₂(NO₃)₃ structures, xTB-stable at **38/41
-(92.7%)** — but it **cannot compose a valence-correct coordination sphere from the metal
-alone** (de-novo: **0 valid / 6,300**).
+This project delivers, in order: a **curated, CSD-validated lanthanide dataset** — 9,306
+training-ready complexes whose trends reproduce the Jiang group's published CSD analyses
+(see [Dataset](dataset.html)); the **first adaptation** of a 3D equivariant diffusion model
+to f-block coordination chemistry and high coordination numbers (CN 7–10); and a model that
+**reliably completes** lanthanide coordination spheres — mask 1 completion gives **126
+valid** Eu(TMMA)₂(NO₃)₃ structures, xTB-stable at **38/41 (92.7%)**, with RePaint tuning
+yield up to 5.20%.
 
-The failure is **chemical, not merely geometric**: the rejections are overwhelmingly
-nitrogen placed in impossible 4-bond environments (~100% of logged rejections), and
-validity sets in to zero as soon as the scaffold is reduced to two context ligands
+The open limitation is **design from scratch**: the model **cannot yet compose a
+valence-correct coordination sphere from the metal alone** (de-novo: **0 valid / 6,300**).
+This is **a diagnostic, not the headline** — and it is chemical, not merely geometric: the
+rejections are overwhelmingly nitrogen in impossible 4-bond environments (~100% of logged
+rejections), and validity falls to zero once the scaffold drops to two context ligands
 (126 → 4 → 0 → 0 for mask 1/2/3/all). The inpainting objective, as trained, teaches
-**local consistency** but not **global composition**.
-
-This is a clean, defensible **negative result with a mechanistic explanation**, and it
-directly motivates the architectural question at the center of the
-[Strategy](strategy.html): whether multi-LigandDiff can be pushed to true design, or
-whether a coordination-aware architecture is needed.
+**local consistency** but not **global composition** — exactly the capability a
+coordination-aware architecture would add (see [Strategy](strategy.html)).
 
 A secondary, methodological conclusion: **automated graph metrics over-flagged
 "failures."** The fragment-count and xTB cross-bond rates (76% / 60.5%) were artifacts of
@@ -35,6 +35,10 @@ a bond-detection cutoff; visual inspection was necessary to get the story right 
 with direct inspection.
 
 ## Next steps (prioritized)
+
+The first and last items below are the two runs that **finish Track A** (the dataset,
+adaptation, validated completion, and diagnostic are already in hand — see
+[Strategy](strategy.html)); items 2–5 feed Track B.
 
 1. **Complete the degradation curve.** Run a dedicated **mask 2** experiment (3 of 5
    hidden) to locate exactly where between mask 1 (works) and mask 3 (0%) the cliff falls.

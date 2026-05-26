@@ -12,6 +12,12 @@ context — only sized/counted. Job logs were inspected with `head`/`tail`/`grep
 `cat` on the large ones. The real project lives in `multi_LigandDiff/`, which is itself a
 git repository.
 
+> **Update (2026-05-26).** The two discrepancies this report raised against
+> `PROJECT_OVERVIEW.md` (Discrepancy #1, the partial r = 10 = 19/300/6.33%; and the "133
+> total valid") have been **corrected in place** in that document: r = 10 = **57/1,500 =
+> 3.80%** and total valid **171** (210 incl. r = 20) are now canonical everywhere. The
+> analysis below is kept as the audit trail, not as an open issue.
+
 ---
 
 ## 1. Repo map

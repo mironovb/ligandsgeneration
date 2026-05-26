@@ -89,43 +89,35 @@ ligand-group slots. Everything downstream of that projection is reused.
 
 ## The CSD data pipeline
 
-Because Berea College has no CSD Python API license, a custom pipeline was built using
-**pymatgen and ASE** instead of the CSD API. Starting from CIF files of lanthanide
-complexes (provided by the Jiang group, CSD v5.46), it runs five stages: parse and filter
-to mononuclear molecular complexes → identify first-shell donors (within 2.8 Å) →
-decompose into ligands via a covalent bond graph → filter to training candidates (CN ∈
-{7,8,9,10}, non-Ln elements in {C,N,O,F,P,S,Cl,Br}) → tensorize.
+Because the host institution has no CSD Python API license, a custom pipeline was built
+using **pymatgen and ASE** instead of the CSD API. Starting from CIF files of lanthanide
+complexes (provided by the Jiang group, CSD v5.46), it runs five stages:
 
-{: .unverified }
-> **The pipeline counts could not be checked from this download.** The source CIFs,
-> `prepare_training_data.py` output, and candidates CSV are **not present** — only the
-> (unreadable) `train_ln.pt` / `val_ln.pt` tensors. The figures below are reproduced from
-> `PROJECT_OVERVIEW.md` and are **not independently verified**. (The derived training
-> *sample* count, by contrast, **is** corroborated — see Training setup.)
+1. **Parse & filter** all 53,333 CIFs to mononuclear molecular complexes (→ 31,979).
+2. **Identify donors** — atoms within 2.8 Å of the Ln center are first-shell donors.
+3. **Decompose into ligands** via a covalent bond graph (1.3× sum of covalent radii);
+   remove the Ln node and take connected components with ≥ 1 donor.
+4. **Filter to training candidates** — mononuclear, CN ∈ {7,8,9,10}, non-Ln elements in
+   {C,N,O,F,P,S,Cl,Br} (→ **9,306**; 6,563 O/N-only).
+5. **Tensorize** each complex (positions, one-hot types, nuclear charges, ligand-group,
+   coordination-site).
 
-**Headline counts (unverified):** 53,333 CIFs → 31,979 mononuclear complexes →
-**9,306 training complexes** (of which 6,563 are O/N-donor only). Ligand inventory:
-216,509 coordinating ligand instances, 54,946 unique SMILES.
+{: .works }
+> **The pipeline counts are now verifiable.** The full analysis report and a per-element
+> CSV are committed (`assets/data/cif_analysis_report.txt`,
+> `assets/data/summary_by_element.csv`), and the pipeline **reproduces the Jiang group's
+> published CSD trends** — O-donor dominance, the lanthanide contraction, and the CN = 8
+> peak. See the **[Dataset](dataset.html)** page for the funnel, the validation table, the
+> per-element breakdown, and the ligand inventory.
 
-**Validation against the Jiang group's published CSD analyses (unverified consistency
-check).** Reproduced from `PROJECT_OVERVIEW.md` §4:
-
-| Quantity | This pipeline | Jiang group papers |
-|---|---|---|
-| Total Ln complexes parsed | 53,333 | 53,370 (ICC 2025) |
-| Mononuclear complexes | 31,979 | 29,891 (ICC 2025) |
-| Donor distribution | 65% O, 18% N, 14% C | O-dominated (Sci. Rep. 2024) |
-| Ln–donor distance trend | 2.61 Å (La) → 2.43 Å (Lu) | 2.62 → 2.41 Å (lanthanide contraction) |
-| CN distribution peak | CN = 8 (9,658), then CN = 9 | CN = 8 dominant from Sm onward |
-
-The small differences (e.g. 31,979 vs 29,891 mononuclear) are attributed to distance-based
-bond detection versus CSD-API coordinate-bond annotations; the *trends* match, which is
-what validated the home-built pipeline.
+**Headline:** 53,333 CIFs parsed → 31,979 mononuclear → **9,306 training complexes**
+(6,563 O/N-only); a ligand inventory of 216,509 instances over 54,946 unique SMILES. Full
+detail and downloads are on the [Dataset](dataset.html) page.
 
 ## Training setup
 
-- **Hardware.** Single NVIDIA **H200** GPU on the MIT Engaging cluster, account
-  `mit_general`, partition `mit_preemptable` (4 h job limit, preemptible).[^cluster]
+- **Hardware.** Single NVIDIA **H200** GPU on a university HPC cluster, on a preemptible
+  partition (4 h job limit).[^cluster]
 - **Initialization.** Fine-tuned **from the pretrained transition-metal checkpoint** (not
   from scratch).
 - **Optimizer.** AdamW + cosine annealing, with **discriminative learning rates** — a
@@ -135,17 +127,17 @@ what validated the home-built pipeline.
   EMA 0.999 at validation; **early stopping with patience 15** on validation loss.[^early]
 - **Data.** The 9,306 complexes, augmented by ligand masking, give logged **335 steps ×
   256 = ~85,760 training samples per epoch** — corroborating the overview's "~85,000
-  samples."[^samples]
+  samples"[^samples] (the full maskable pool is ~212,000; see
+  [Dataset](dataset.html#training-sample-budget)).
 
 See [Results → Training](results.html#training) for the loss trajectory and the
 session-by-session run history.
 
 ---
 
-[^cluster]: Account/partition confirmed across the sbatch scripts; the 4 h wall on
-    `mit_preemptable` shapes several "timed-out" outcomes in the [Experiment
-    Log](experiment-log.html). GPU model (H200) is corroborated by the `ln_train_h200`
-    job name.
+[^cluster]: The preemptible partition's 4 h wall shapes several "timed-out" outcomes in
+    the [Experiment Log](experiment-log.html). GPU model (H200) is corroborated by the
+    `ln_train_h200` job name.
 
 [^lr]: `finetune.py` exposes `--lr_head` and `--lr_backbone`; the discriminative-LR
     optimizer groups are also why four early resume attempts failed with "loaded state

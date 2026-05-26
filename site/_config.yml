@@ -73,7 +73,7 @@ sass:
 # Update these two lines whenever project status changes; the home page,
 # changelog, and any page that includes status.html pick them up automatically.
 status_date: "2026-05-26"
-status_summary: "Completion fine-tune works (val_loss 977.8 → 49.9, ~95% ↓); de-novo design currently fails coordination validity. Two tracks active — publish the finding now, build a coordination-aware platform next."
+status_summary: "Curated a CSD-validated lanthanide dataset (9,306 complexes) and fine-tuned multi-LigandDiff to the f-block: completion works (xTB-stable), RePaint tunes yield, de-novo design is the open diagnostic. Track A bundles dataset + adaptation + validated completion + diagnostic — a mask-2 run and a DFT showcase remain."
 
 # --- Build hygiene: keep tooling files out of the generated site ---
 exclude:
