@@ -1,0 +1,72 @@
+# =============================================================================
+# Deploy the Jekyll site in ./site to GitHub Pages.
+#
+# The publishable site is the `site/` SUBFOLDER of this repo (the repo root holds
+# the project reports — see README.md). GitHub Actions only runs workflows from the
+# repo-root .github/workflows/, so THIS file is the one that actually deploys.
+# (site/.github/workflows/pages.yml is an inert variant kept only for the
+#  "deploy the site/ folder as its own standalone repo" path in site/README.md.)
+#
+# ONE-TIME SETUP: in the repo on GitHub, Settings -> Pages -> Build and deployment ->
+# Source = "GitHub Actions" (NOT "Deploy from a branch"). Then every push to main
+# rebuilds and redeploys the site automatically.
+# =============================================================================
+name: Deploy Jekyll site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Least-privilege token scopes the Pages deploy needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; let an in-progress production deploy finish.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site        # all `run:` steps execute inside site/
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"          # resolves this Gemfile/lock cleanly; Jekyll 4.3
+          bundler-cache: true          # bundle install + cache, keyed on Gemfile.lock
+          working-directory: site      # where the Gemfile / Gemfile.lock live
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "site/_site/"          # path is relative to the repo root, not site/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

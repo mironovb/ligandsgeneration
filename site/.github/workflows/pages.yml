@@ -1,3 +1,10 @@
+# !! INERT IN THE `ligandsgeneration` REPO !!
+# GitHub Actions only runs workflows from the repo-root .github/workflows/. In that repo
+# the site is a `site/` SUBFOLDER, so the workflow that actually deploys lives at the repo
+# root: ../../.github/workflows/pages.yml (configured for the site/ working directory).
+# Keep THIS copy only for deploying the site/ folder as its OWN standalone repo — then it
+# sits at that repo's root and the notes below apply as written.
+#
 # Build the Jekyll site and deploy it to GitHub Pages.
 #
 # Prereq: in the repo, Settings → Pages → Build and deployment → Source =

@@ -31,6 +31,12 @@ bundle exec jekyll build                          # output in _site/
 just-the-docs isn't one of GitHub's built-in "classic Pages" themes, so the site is
 built and deployed by `.github/workflows/pages.yml`.
 
+> **In the `ligandsgeneration` repo, `site/` is a subfolder, not the repo root** — so the
+> deploy is driven by the **repo-root** `.github/workflows/pages.yml` (configured for the
+> `site/` working directory), and the standalone steps below do **not** apply. See the root
+> `README.md`. The instructions below are for deploying this `site/` folder as its **own
+> standalone repo**.
+
 1. Push the **contents of this `site/` directory** to a GitHub repo (so `_config.yml`
    sits at the repo root). Keeping it as its own repo is the cleanest "deploy
    independently" path; the workflow file then lands at `.github/workflows/pages.yml`.
