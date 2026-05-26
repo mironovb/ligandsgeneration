@@ -1,0 +1,65 @@
+# Build the Jekyll site and deploy it to GitHub Pages.
+#
+# Prereq: in the repo, Settings → Pages → Build and deployment → Source =
+# "GitHub Actions" (NOT "Deploy from a branch").
+#
+# This assumes the site lives at the repo root (i.e. you pushed the CONTENTS of
+# the `site/` directory as the repo). If instead you keep the site in a `site/`
+# subfolder of a larger repo, set `working-directory` / build source to `site`
+# in the build job below (notes inline).
+name: Deploy Jekyll site to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment; don't cancel an in-progress production deploy.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"          # GitHub Pages runtime; resolves this Gemfile cleanly
+          bundler-cache: true
+          # If the site is in a subfolder, add:  working-directory: site
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+        # If the site is in a subfolder, add:  working-directory: site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site/"             # if in a subfolder: "site/_site/"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

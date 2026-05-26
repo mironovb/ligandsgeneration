@@ -1,0 +1,151 @@
+# =============================================================================
+# papers.yml — reference list. Rendered on background.md, grouped by `group`.
+#
+# Schema (fields per row):
+#   key:      short citation key used in pages (e.g. "toney2025pnas")
+#   group:    background | reference | method | kulik   (controls grouping on the page)
+#   authors:  author string
+#   title:    paper / software title
+#   venue:    journal, year, volume, pages
+#   doi:      bare DOI (e.g. 10.1073/pnas.2415658122), or "" if none given in sources
+#   url:      canonical link, or "" if none given in sources
+#   software: associated code/tool, or ""
+#   note:     one-line relevance to this project, or ""
+#
+# DOIs/URLs are included ONLY where they appear in PROJECT_OVERVIEW.md or
+# LITERATURE_AND_STRATEGY.md; blanks are intentional (not invented).
+# =============================================================================
+
+# --- Application domain: rare-earth separations & CSD coordination analyses ---
+- key: "li2022jacsau"
+  group: "background"
+  authors: "Li, S.; Jansone-Popova, S.; Jiang, D.-e."
+  title: "Advancing Rare-Earth Separation by Machine Learning"
+  venue: "JACS Au, 2022"
+  doi: ""
+  url: ""
+  software: ""
+  note: "Foundational separations-ML paper from the Jiang group; the dataset and problem framing originate here."
+
+- key: "li2024scirep"
+  group: "background"
+  authors: "Li, S.; Jansone-Popova, S.; Jiang, D.-e."
+  title: "CSD-wide analysis of lanthanide coordination trends (donor distributions, coordination numbers)"
+  venue: "Sci. Rep., 2024"
+  doi: "10.1038/s41598-024-62074-3"
+  url: "https://doi.org/10.1038/s41598-024-62074-3"
+  software: ""
+  note: "O-dominated donor sets; CN = 8 dominant from Sm onward. The reference our data pipeline was checked against."
+
+- key: "li2025icc"
+  group: "background"
+  authors: "Li, S.; Jansone-Popova, S.; Jiang, D.-e."
+  title: "Nitrate and water in the first coordination shells of lanthanide complexes"
+  venue: "Inorg. Chem. Commun., 2025, 179, 114844"
+  doi: ""
+  url: ""
+  software: ""
+  note: "Follow-up analysis of ~29,891 mononuclear Ln complexes; counter-ions/solvent routinely co-coordinate."
+
+# --- The reference complex used in every generation experiment ---
+- key: "kravchuk2024ejic"
+  group: "reference"
+  authors: "Kravchuk, D. et al."
+  title: "Eu(TMMA)₂(NO₃)₃ — TMMA = N,N,N',N'-tetramethylmalonamide"
+  venue: "Eur. J. Inorg. Chem. (EurJIC), 2024"
+  doi: "10.1002/ejic.202300632"
+  url: "https://doi.org/10.1002/ejic.202300632"
+  software: "CCDC VEDTAA01 / deposit 2296300"
+  note: "Standard reference complex: Eu center, 2 TMMA + 3 nitrate = 5 ligands, CN 10, 35 heavy atoms, cis. A diamide chemically adjacent to diglycolamide separations extractants."
+
+# --- Generative-modeling methods (the base model and the techniques it uses) ---
+- key: "liganddiff"
+  group: "method"
+  authors: "Jin, H.; Merz, K. M."
+  title: "multi-LigandDiff — 3D diffusion generation of metal-complex ligands (builds on LigandDiff, 2023)"
+  venue: "J. Chem. Theory Comput. (JCTC), 2024"
+  doi: "10.1021/acs.jctc.4c00775"
+  url: "https://doi.org/10.1021/acs.jctc.4c00775"
+  software: "multi_LigandDiff (this project's base model)"
+  note: "The base architecture adapted to lanthanides here (ligand_node_nf 7 → 11, zero-padded TM weights). Originally d-block, CN ≤ 6 only."
+
+- key: "edm"
+  group: "method"
+  authors: "Hoogeboom, E. et al."
+  title: "Equivariant Diffusion for Molecule Generation in 3D (EDM)"
+  venue: "ICML 2022"
+  doi: ""
+  url: ""
+  software: ""
+  note: "The diffusion formulation multi-LigandDiff is built on."
+
+- key: "gvp"
+  group: "method"
+  authors: "Jing, B. et al."
+  title: "Learning from Protein Structure with Geometric Vector Perceptrons (GVP-GNN)"
+  venue: "ICLR 2021"
+  doi: ""
+  url: ""
+  software: ""
+  note: "The SE(3)-equivariant network used as the diffusion score function."
+
+- key: "repaint"
+  group: "method"
+  authors: "Lugmayr, A. et al."
+  title: "RePaint: Inpainting using Denoising Diffusion Probabilistic Models"
+  venue: "CVPR 2022"
+  doi: ""
+  url: "https://arxiv.org/abs/2201.09865"
+  software: ""
+  note: "Inference-time resampling ported into the sampler (--resample_r) to raise yield; no retraining needed."
+
+- key: "diffsbdd"
+  group: "method"
+  authors: "Schneuing, A. et al."
+  title: "Structure-based drug design with equivariant diffusion models (DiffSBDD)"
+  venue: "Nat. Comput. Sci., 2024"
+  doi: "10.1038/s43588-024-00737-x"
+  url: "https://doi.org/10.1038/s43588-024-00737-x"
+  software: ""
+  note: "Precedent for applying RePaint to 3D molecular generation (reported ~3× yield improvement)."
+
+- key: "projdiff"
+  group: "method"
+  authors: "Christopher, J. et al."
+  title: "Projected (constrained) Diffusion"
+  venue: "NeurIPS 2024"
+  doi: ""
+  url: "https://arxiv.org/abs/2402.03559"
+  software: ""
+  note: "Hard geometric-projection sampling, implemented in the repo as a candidate fix for placement errors."
+
+# --- The three Kulik-group papers (Prof. Jiang's reading list) ---
+- key: "toney2025pnas"
+  group: "kulik"
+  authors: "Toney, J. W.; St. Michel, R. G.; Garrison, A. G.; Kevlishvili, I.; Kulik, H. J."
+  title: "Graph neural networks for predicting metal–ligand coordination of transition metal complexes"
+  venue: "PNAS 2025, 122, e2415658122 (preprint: ChemRxiv, DOI 10.26434/chemrxiv-2024-nzk5q)"
+  doi: "10.1073/pnas.2415658122"
+  url: "https://doi.org/10.1073/pnas.2415658122"
+  software: "pydentate — https://github.com/hjkgrp/pydentate"
+  note: "The predict-then-build exemplar: predict CN + donor atoms from SMILES, then build a DFT-realistic 3D complex. The methodological model for Track B (but d-block, CN ≤ 6 only)."
+
+- key: "kevlishvili2023jpclett"
+  group: "kulik"
+  authors: "Kevlishvili, I.; Duan, C.; Kulik, H. J."
+  title: "Classification of Hemilabile Ligands Using Machine Learning"
+  venue: "J. Phys. Chem. Lett. 2023, 14, 11100–11109"
+  doi: "10.1021/acs.jpclett.3c02828"
+  url: "https://doi.org/10.1021/acs.jpclett.3c02828"
+  software: ""
+  note: "Denticity is dynamic, not a fixed per-ligand lookup; the 2nd–4th coordination spheres matter — both indict any locally-reasoning generator."
+
+- key: "toney2025jacs"
+  group: "kulik"
+  authors: "Toney, J. W.; St. Michel, R. G.; Garrison, A. G.; Kevlishvili, I.; Kulik, H. J."
+  title: "Identifying Dynamic Metal–Ligand Coordination Modes with Ensemble Learning"
+  venue: "JACS 2025, 147, 48218–48234"
+  doi: "10.1021/jacs.5c17169"
+  url: "https://doi.org/10.1021/jacs.5c17169"
+  software: "pydentate + pydentate Lite — https://molsimplify.mit.edu/pydentate.html"
+  note: "Predicts all plausible coordination modes end-to-end from one SMILES; names the limitation of our model's lineage (generators 'assuming a constant coordination mode')."

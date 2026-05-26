@@ -1,0 +1,28 @@
+source "https://rubygems.org"
+
+# ---------------------------------------------------------------------------
+# Build with a MODERN Ruby (3.x or newer — this repo was built with Homebrew
+# Ruby; see README). The machine's system Ruby (2.6.10) is too old for the
+# current Jekyll toolchain and its native gems won't compile under the installed
+# clang, so put Homebrew Ruby on your PATH first:
+#     export PATH="/usr/local/opt/ruby/bin:$PATH"
+#
+# just-the-docs is used as a normal gem theme (not `remote_theme`), which avoids
+# the github-pages / nokogiri dependency chain. GitHub Pages deploys via the
+# Actions workflow in .github/workflows/pages.yml (it runs Ruby 3.x).
+# ---------------------------------------------------------------------------
+
+gem "jekyll", "~> 4.3"            # current Jekyll 4.x (uses sass-embedded, no libsass build)
+gem "just-the-docs", "~> 0.7.0"  # sidebar-nav theme, suited to a multi-page tracker
+
+group :jekyll_plugins do
+  gem "jekyll-seo-tag", "~> 2.8"
+  gem "jekyll-include-cache", "~> 0.2"
+end
+
+# WEBrick left Ruby's stdlib in 3.0; needed by `jekyll serve`.
+gem "webrick", "~> 1.8"
+
+# Windows-only helpers (skipped on macOS/Linux via the platform filter).
+gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+gem "wdm", "~> 0.1", platforms: [:mingw, :x64_mingw, :mswin]

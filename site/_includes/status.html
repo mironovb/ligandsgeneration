@@ -1,0 +1,10 @@
+{%- comment -%}
+  Living-tracker status banner.
+  Reads `status_date` and `status_summary` from _config.yml so the whole site
+  can be re-stamped by editing two lines. Include on any page with:
+      {% include status.html %}
+{%- endcomment -%}
+<div style="border-left: 4px solid #2563eb; background: #f1f5f9; padding: 0.6em 1em; margin: 1em 0 1.5em; border-radius: 4px;">
+  <strong>Status as of {{ site.status_date }}.</strong>
+  {{ site.status_summary }}
+</div>

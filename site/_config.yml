@@ -1,0 +1,87 @@
+title: "Lanthanide Ligand Generation"
+description: "A living tracker for adapting multi-LigandDiff to lanthanide coordination complexes — background, methods, results, experiment log, and roadmap."
+
+# ---------------------------------------------------------------------------
+# Theme: just-the-docs (installed as a gem; see Gemfile). The sidebar navigation
+# suits a multi-page tracker. Deployment is via GitHub Actions
+# (.github/workflows/pages.yml) because just-the-docs is not one of GitHub's
+# built-in "classic Pages" themes.
+# ---------------------------------------------------------------------------
+theme: just-the-docs
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-include-cache
+
+# ===========================================================================
+# DEPLOYMENT (GitHub Actions — see .github/workflows/pages.yml)
+#
+# The workflow injects the correct --baseurl at build time from your repo name,
+# so you normally do NOT need to hardcode url/baseurl for the deployed site.
+# Set them here only to make a local `bundle exec jekyll build` match a project
+# path, or if you deploy some other way:
+#
+#   (A) Project site  https://<username>.github.io/<repo>/   (most common)
+#         url:     "https://<username>.github.io"
+#         baseurl: "/<repo>"     # leading slash, NO trailing slash, e.g. "/ligandgen"
+#
+#   (B) User/Org site https://<username>.github.io/
+#         url:     "https://<username>.github.io"
+#         baseurl: ""
+#
+# Local `bundle exec jekyll serve` works with baseurl="" → http://localhost:4000/.
+# ===========================================================================
+url: ""
+baseurl: ""
+
+# --- just-the-docs options ---
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+
+# --- Callouts (just-the-docs 0.7.0). Use as:  {: .note } before a paragraph/blockquote.
+# `unverified` / `caveat` deliberately stand out so claims that are NOT log-verified are
+# never mistaken for verified facts. ---
+callouts:
+  note:
+    title: Note
+    color: blue
+  works:
+    title: Verified
+    color: green
+  caveat:
+    title: Metric caveat
+    color: yellow
+  unverified:
+    title: Unverified
+    color: yellow
+  fails:
+    title: Negative result
+    color: red
+
+# Quiet just-the-docs 0.7.0's legacy-Sass deprecation warnings (darken()/lighten()
+# that newer Dart Sass flags). Cosmetic only — keeps build/serve output clean.
+sass:
+  quiet_deps: true
+  verbose: false
+  silence_deprecations:
+    - color-functions
+    - import
+    - global-builtin
+
+# --- Living-tracker status banner (rendered by _includes/status.html) ---
+# Update these two lines whenever project status changes; the home page,
+# changelog, and any page that includes status.html pick them up automatically.
+status_date: "2026-05-26"
+status_summary: "Completion fine-tune works (val_loss 977.8 → 49.9, ~95% ↓); de-novo design currently fails coordination validity. Two tracks active — publish the finding now, build a coordination-aware platform next."
+
+# --- Build hygiene: keep tooling files out of the generated site ---
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .bundle
+  - README.md
+  - HOW_TO_UPDATE.md                 # maintainer doc, not a published page
+  - Makefile                         # build helper, not site content
+  - assets/figures/make_figures.py   # figure generator; its SVG outputs ARE served

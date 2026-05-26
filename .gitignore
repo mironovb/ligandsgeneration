@@ -1,0 +1,41 @@
+# =============================================================================
+# Root .gitignore — defense-in-depth for the working directory.
+#
+# The publishable site is the `site/` directory and has its OWN .gitignore.
+# The heavy ML artifacts live in `multi_LigandDiff/` (its own git repo, ~1.1 GB).
+# This file ensures that if you ever `git init` HERE (e.g. to version the audit
+# docs alongside the site), `git add -A` will never stage gigabytes of tensors,
+# checkpoints, or build output.
+# =============================================================================
+
+# Nested project repo: ~1.1 GB, has its own .git. Keep it out of any root repo.
+# (Un-ignore and add as a submodule if you ever want to track its commit here.)
+multi_LigandDiff/
+
+# Workflow prompts (claude -p / arun) and reference paper PDFs — kept local, not published.
+prompts/
+papers/
+
+# Heavy ML artifacts, wherever they appear
+*.ckpt
+*.tgz
+*.tar
+*.pt
+*.npy
+*.npz
+*.sdf
+design_test_runs/
+generated/
+xtb_*/
+__pycache__/
+
+# Jekyll build output / local bundler install (under site/)
+site/_site/
+site/.jekyll-cache/
+site/.jekyll-metadata
+site/vendor/
+site/.bundle/
+
+# macOS / harness cruft
+.DS_Store
+.arun/

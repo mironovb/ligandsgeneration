@@ -1,0 +1,332 @@
+# =============================================================================
+# experiments.yml — one entry per sbatch run. Rendered as a table on
+# experiment-log.md. Populated from VERIFICATION_REPORT.md §5 ("Completed
+# sbatches") + §2/§3/§4. Account is `mit_general` throughout.
+#
+# Schema (fields per row):
+#   job_id:     SLURM job id(s) as a string (may list several, space-separated)
+#   sbatch:     submission script filename
+#   job_name:   SLURM -J name ("" if not recorded)
+#   partition:  SLURM -p partition(s)
+#   date:       run date YYYY-MM-DD if logged, else "" (NOT guessed)
+#   gpu_hours:  approx GPU-hours, filled only where a wall window/4 h cap is logged
+#   phase:      setup | training | generation | xtb | sweep | design | not-run
+#   status:     completed-clean | completed | timed-out | errored | incomplete | not-run
+#   outcome:    one-line human-readable result
+#   key_result: headline number / artifact produced
+#   notes:      caveats / artifact paths / provenance
+#
+# --- HOW TO APPEND A NEW RUN (living-tracker mechanism) -----------------------
+# When a future sbatch finishes: copy one block below, fill every field from the
+# job's .out/.err log (job id, partition, the line that prints the result), set
+# `status`, and put the headline number in `key_result`. Keep `date` "" unless
+# the log prints it. Then add a dated line to changelog.md. The table on
+# experiment-log.md re-renders automatically — no other edits needed.
+# =============================================================================
+
+# --- Setup / smoke tests ---
+- job_id: "12113735"
+  sbatch: "quicktest.sbatch"
+  job_name: "ln_quick"
+  partition: "mit_quicktest"
+  date: ""
+  gpu_hours: ""
+  phase: "setup"
+  status: "completed"
+  outcome: "Environment smoke test"
+  key_result: "setup verified"
+  notes: ""
+
+- job_id: "14082659"
+  sbatch: "gpu_test.sbatch"
+  job_name: "gpu_smoke"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "setup"
+  status: "completed"
+  outcome: "GPU availability check"
+  key_result: '"PASS: GPU is working"'
+  notes: ""
+
+# --- Training (all -J ln_train_h200; cannot be told apart by output filename) ---
+- job_id: "12124078"
+  sbatch: "finetune_h200/preempt/normal.sbatch"
+  job_name: "ln_train_h200"
+  partition: "mit_preemptable / mit_normal_gpu"
+  date: "2026-04-17"
+  gpu_hours: 0.5
+  phase: "training"
+  status: "errored"
+  outcome: "Fine-tune from pretrained TM checkpoint; crashed at epoch 9"
+  key_result: "val_loss 977.76 @ epoch 0 (start); saved ckpts 02–08"
+  notes: "Crash during sampling: molSimplify findMetal IndexError. Source: ln_train_h200_12124078.out:76."
+
+- job_id: "12130545 12131531 12131768 12133526"
+  sbatch: "finetune_h200/*.sbatch"
+  job_name: "ln_train_h200"
+  partition: "mit_preemptable"
+  date: "2026-04-17"
+  gpu_hours: ""
+  phase: "training"
+  status: "errored"
+  outcome: "Four resume attempts died at startup"
+  key_result: "no training progress"
+  notes: 'Discriminative-LR resume bug: "loaded state dict has a different number of parameter groups." Resume did not work cleanly at first.'
+
+- job_id: "12136600"
+  sbatch: "finetune_h200/*.sbatch"
+  job_name: "ln_train_h200"
+  partition: "mit_preemptable"
+  date: "2026-04-17"
+  gpu_hours: ""
+  phase: "training"
+  status: "errored"
+  outcome: "Resume attempt crashed"
+  key_result: "no training progress"
+  notes: "molSimplify IndexError (same failure as 12124078)."
+
+- job_id: "12138834"
+  sbatch: "finetune_h200/preempt.sbatch"
+  job_name: "ln_train_h200"
+  partition: "mit_preemptable"
+  date: "2026-04-17"
+  gpu_hours: 4.0
+  phase: "training"
+  status: "timed-out"
+  outcome: "Resumed from ckpt 08; ran epochs 9–29 then hit the 4 h wall"
+  key_result: "saved ckpt 25"
+  notes: 'Cancelled due to TIME LIMIT (mit_preemptable 4 h cap).'
+
+- job_id: "12151181"
+  sbatch: "finetune_h200/normal.sbatch"
+  job_name: "ln_train_h200"
+  partition: "mit_normal_gpu / mit_preemptable"
+  date: "2026-04-18"
+  gpu_hours: 5.2
+  phase: "training"
+  status: "completed-clean"
+  outcome: "Resumed from ckpt 25; epochs 26–63; clean early-stop"
+  key_result: "best val_loss 49.913 @ epoch 48 (977.8 → 49.9, ~95% ↓)"
+  notes: "Early stop fired at ep63 (patience 15). Sampling 0.970/0.938/0.005. Best ckpt: models/ln_finetuned/ln_finetuned_epoch=48.ckpt. Source: ln_train_h200_12151181.out:907; 12151181.err."
+
+# --- Generation (mask1 completion on the Eu(TMMA)₂(NO₃)₃ reference) ---
+- job_id: "12185735"
+  sbatch: "generate.sbatch"
+  job_name: "ln_gen"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "generation"
+  status: "timed-out"
+  outcome: "Multi-combo generation, cut off"
+  key_result: "31 combos / 620 samples before cutoff"
+  notes: ""
+
+- job_id: "12194449"
+  sbatch: "generate_clean.sbatch"
+  job_name: "ln_gen_clean"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "generation"
+  status: "incomplete"
+  outcome: "Generation run, no 'Done' line logged"
+  key_result: "1,550 samples, cut off"
+  notes: "Outcome inferred from absence of a 'Done' line."
+
+- job_id: "12207365"
+  sbatch: "generate_mask1.sbatch"
+  job_name: "ln_gen_m1"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "generation"
+  status: "completed"
+  outcome: "Single-ligand (mask-1) completion generation"
+  key_result: "41 valid → generated/eu_tmma_mask1_epoch48"
+  notes: "This is the mask1_baseline set later xTB-screened (38/41 converged)."
+
+- job_id: "12214531"
+  sbatch: "generate_minimal.sbatch"
+  job_name: "ln_gen_min"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "generation"
+  status: "completed"
+  outcome: "Minimal-config smoke test"
+  key_result: "3 valid"
+  notes: ""
+
+- job_id: "12216914"
+  sbatch: "generate_big.sbatch"
+  job_name: "ln_gen_big"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "generation"
+  status: "completed"
+  outcome: "Large-batch smoke test"
+  key_result: "1 valid"
+  notes: ""
+
+# --- xTB post-processing (GFN2-xTB optimization / validity) ---
+- job_id: "12211401"
+  sbatch: "xtb_opt.sbatch"
+  job_name: "xtb_opt"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "xtb"
+  status: "completed"
+  outcome: "Early xTB optimization test"
+  key_result: "ran (with per-structure xtb failures)"
+  notes: ""
+
+- job_id: "12329159"
+  sbatch: "sbatches/xtb_batch.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: "2026-04-22"
+  gpu_hours: ""
+  phase: "xtb"
+  status: "completed"
+  outcome: "GFN2-xTB on the mask1_baseline set"
+  key_result: "38/41 converged (92.7%)"
+  notes: "Source: xtb_results/mask1_baseline/summary.json (41 entries, 38 xtb_success:true)."
+
+- job_id: "12340608"
+  sbatch: "sbatches/xtb_batch.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: "2026-04-22"
+  gpu_hours: ""
+  phase: "xtb"
+  status: "completed"
+  outcome: "GFN2-xTB on the repaint_r5 set"
+  key_result: "81/85 converged"
+  notes: "Source: repaint_r5/summary.json."
+
+# --- RePaint resample sweep ---
+- job_id: "12329152"
+  sbatch: "sbatches/overnight_repaint.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: "2026-04-22"
+  gpu_hours: 4.0
+  phase: "sweep"
+  status: "timed-out"
+  outcome: "Smoke + r=1 + r=5; r=10 started then cut at the 4 h wall"
+  key_result: "r=1: 29/2500 (1.16%); r=5: 85/2500 (3.40%)"
+  notes: "Dirs repaint_r1/noH (29), repaint_r5/noH (85). r=10 had no result line before cutoff."
+
+- job_id: "12340606"
+  sbatch: "sbatches/finish_sweep.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: "2026-04-22"
+  gpu_hours: ""
+  phase: "sweep"
+  status: "completed"
+  outcome: "Completed r=10 and r=20 to finish the sweep"
+  key_result: "r=10: 57/1500 (3.80%); r=20: 39/750 (5.20%)"
+  notes: "Corrects PROJECT_OVERVIEW.md's r=10 (19/300/6.33%) — the 19 was a partial overnight run. 'All done: Apr 22 15:21:43'. Dirs repaint_r10/noH (57), repaint_r20/noH (39)."
+
+# --- Design test (completion vs de-novo) ---
+- job_id: "14289937"
+  sbatch: "run_design_test.sbatch"
+  job_name: "ln_design"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "design"
+  status: "errored"
+  outcome: "Died at startup; no output directory"
+  key_result: "no output"
+  notes: 'bashrc nounset bug: set -euo pipefail + source ~/.bashrc trips on unset BASHRCSOURCED.'
+
+- job_id: "14292188"
+  sbatch: "run_design_test.sbatch"
+  job_name: "ln_design"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: 4.0
+  phase: "design"
+  status: "timed-out"
+  outcome: "mask1 + mask2 completed before the 4 h wall"
+  key_result: "mask1 = 126 valid; mask2 = 4 valid"
+  notes: "design_test_runs/14292188. Rejections overwhelmingly N explicit-valence (151/170 .err lines, 100% nitrogen)."
+
+- job_id: "14344725"
+  sbatch: "run_design_maskall.sbatch"
+  job_name: "ln_maskall"
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: 4.0
+  phase: "design"
+  status: "timed-out"
+  outcome: "Full de-novo (maskall) ran to its 6,300 attempts; mask3 started then cut off"
+  key_result: "maskall = 0 valid / 6,300 (0.00%); mask3 = 0 valid"
+  notes: "design_test_runs/maskall_14344725. 6,300 = 150 seeds × 42 denticity partitions. mask3/noH empty. Source: ln_maskall_14344725.out/.err."
+
+# --- Scripted but never run (no job log; see VERIFICATION_REPORT.md §6.5) ---
+- job_id: ""
+  sbatch: "sbatches/sweep_repaint.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "not-run"
+  status: "not-run"
+  outcome: "Superseded by overnight_repaint + finish_sweep"
+  key_result: "—"
+  notes: "No log."
+
+- job_id: ""
+  sbatch: "sbatches/context_ablation.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "not-run"
+  status: "not-run"
+  outcome: "Never logged"
+  key_result: "—"
+  notes: "paper/ context-density ablation has NO supporting job output — omit from any writeup."
+
+- job_id: ""
+  sbatch: "sbatches/dblock_cross.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "not-run"
+  status: "not-run"
+  outcome: "Never logged"
+  key_result: "—"
+  notes: "paper/ cross-architecture table is empty/pending (cross_arch_summary.csv all 'pending')."
+
+- job_id: ""
+  sbatch: "sbatches/projection_stack.sbatch"
+  job_name: ""
+  partition: "mit_preemptable"
+  date: ""
+  gpu_hours: ""
+  phase: "not-run"
+  status: "not-run"
+  outcome: "Never logged"
+  key_result: "—"
+  notes: "paper/ projection-stack '6.4% valid' has no log and contradicts the real xTB data."
+
+- job_id: ""
+  sbatch: "sbatches/dft_orca.sbatch"
+  job_name: ""
+  partition: "mit_normal"
+  date: ""
+  gpu_hours: ""
+  phase: "not-run"
+  status: "not-run"
+  outcome: "Not run — template only"
+  key_result: "—"
+  notes: "Only orca_templates/pbe0_eu.inp exists; no DFT outputs. Do NOT claim DFT validation as done."
