@@ -44,7 +44,8 @@ Every push to `main` triggers [`.github/workflows/pages.yml`](.github/workflows/
 which builds the `site/` subfolder with Jekyll and publishes it to GitHub Pages. The workflow
 injects the correct `--baseurl` automatically, so no URL is hardcoded in `_config.yml`.
 
-**One-time setup** (required before the first deploy): on GitHub, go to
-**Settings → Pages → Build and deployment** and set **Source = "GitHub Actions"**. After
-that, pushing to `main` (or running the workflow manually from the Actions tab) redeploys
-the site.
+**Enabling Pages:** the workflow's *Setup Pages* step uses `enablement: true`, so its first
+run attempts to turn Pages on (with the GitHub Actions source) automatically. If repo/org
+policy blocks that, enable it once by hand: **Settings → Pages → Build and deployment →
+Source = "GitHub Actions"**. After that, pushing to `main` — or running the workflow
+manually from the **Actions** tab — redeploys the site.

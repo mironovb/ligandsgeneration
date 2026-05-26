@@ -7,9 +7,10 @@
 # (site/.github/workflows/pages.yml is an inert variant kept only for the
 #  "deploy the site/ folder as its own standalone repo" path in site/README.md.)
 #
-# ONE-TIME SETUP: in the repo on GitHub, Settings -> Pages -> Build and deployment ->
-# Source = "GitHub Actions" (NOT "Deploy from a branch"). Then every push to main
-# rebuilds and redeploys the site automatically.
+# ENABLING PAGES: the "Setup Pages" step below uses `enablement: true`, so the first run
+# tries to turn Pages on (with the GitHub Actions source) by itself. If repo/org policy
+# blocks that, enable it once manually: Settings -> Pages -> Build and deployment ->
+# Source = "GitHub Actions". After that, every push to main rebuilds and redeploys.
 # =============================================================================
 name: Deploy Jekyll site to GitHub Pages
 
@@ -49,6 +50,8 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true             # auto-enable Pages (Actions source) on first run
 
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
