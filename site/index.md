@@ -85,6 +85,7 @@ Log](experiment-log.html) for the full run table.
 | [Dataset](dataset.html) | The lanthanide CSD curation: 53k CIFs → 9,306 training complexes, validated against the Jiang group's CSD papers; per-element table + downloads. |
 | [Methods](methods.html) | The multi-LigandDiff architecture, the lanthanide adaptation, the data pipeline, and the training setup. |
 | [Results](results.html) | Training curve, RePaint sweep, the metric caveat, and the de-novo design test. |
+| [Code Review](code-review.html) | Code-level reading of the repo: where the validity/sampling pipeline can be wrong (the nitrate-rejecting checker, the inflated 6,300 denominator) and the cheapest fixes toward a positive de-novo result. |
 | [Experiment Log](experiment-log.html) | Every sbatch run: job id, partition, outcome, key result — the living tracker. |
 | [Strategy](strategy.html) | The two-track roadmap (publish the finding now; build a coordination-aware platform next). |
 | [Conclusions](conclusions.html) | The current conclusion and prioritized next steps. |

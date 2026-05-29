@@ -11,6 +11,24 @@ nav_order: 8
 
 A running log of changes to this tracker. Newest first.
 
+- **2026-05-29** — **Added a [Code Review](code-review.html) page (codebase audit).** A
+  static, sourced read of the `multi_LigandDiff` repo asking two things: where the
+  validity/sampling pipeline can be wrong, and the cheapest changes toward a positive de-novo
+  result. Headline findings, each cited to code or job logs: (1) the de-novo **0 / 6,300** is
+  scored by the *same* brittle distance-based gate the [metric caveat](results.html#the-metric-caveat)
+  already distrusts, and the maskall log holds only **5** sanitize errors — so ~6,295 attempts
+  failed *silently* at the geometric gate, not at nitrogen valence (the "100% nitrogen" stat is
+  from a different, mask-1/2-dominated run); (2) `make_mol_openbabel` rebuilds atoms by **symbol
+  only**, dropping formal charges, so a correctly-built **nitrate** (the reference has three) is
+  *guaranteed* to fail `Chem.SanitizeMol` — which both explains why mask 1 "works" and means part
+  of the **0** is the checker, not the model; (3) `denticity_partitions(10)` over-generates — 19
+  of 42 partitions are chemically impossible — inflating the 6,300 denominator; (4) the de-novo
+  task gives denticity but **no composition**, and a *random* atom budget; (5) the exclusion-shell
+  projection's `d_min` (1.3–1.5 Å) sits **below** the bond-detection cutoff (1.7–2.0 Å) and is a
+  no-op in the bare-metal case (and was never used in a trusted run); (6) train/generate/validate
+  use **three different bond conventions**. Affirms the *verified positive* that the Ln transfer
+  loaded cleanly (227/231 layers). Cross-linked from [Results](results.html) and the home nav. No
+  results were re-run; this is an analysis, not new data.
 - **2026-05-26** — **Dataset added; Track A broadened; numbers solidified; files
   reorganized.** Added a **[Dataset](dataset.html)** page documenting the CSD curation
   (53,333 CIFs → **9,306** training complexes, 6,563 O/N-only; 216,509 ligand instances /

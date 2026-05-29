@@ -163,8 +163,12 @@ time limit; mask 3 was cut off, and only the empty output directory proves 0 val
 > gap consistent with neighbors," but has **no notion of composing a valence-correct
 > fragment from scratch.**
 
-This is a clean, defensible negative result with a chemical (not merely geometric)
-explanation, and it directly motivates the [Strategy](strategy.html).
+This is a clean negative result — but **before** reading it as a pure model-capability
+verdict, see the [Code Review](code-review.html): the same validity instrument flagged here
+also structurally **rejects a correctly-built nitrate** (the reference has three), and the
+"100% nitrogen" statistic is from a different run — so part of this **0** is the *checker*,
+not the model. The code review lists the cheapest fixes that would either move the number off
+zero or make the negative result rigorous. It directly motivates the [Strategy](strategy.html).
 
 ---
 
