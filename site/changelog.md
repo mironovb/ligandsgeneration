@@ -11,6 +11,14 @@ nav_order: 8
 
 A running log of changes to this tracker. Newest first.
 
+- **2026-06-16** — **Added an [AI Context](ai-context.html) export.** A new page bundles every
+  content page into one Markdown document — with the `_data`-driven tables (experiment log,
+  paper list) fully expanded and the *unverified* / *negative-result* callouts preserved as
+  labels — and offers **copy-to-clipboard** and **download-as-`.md`**. The same content is
+  served as [`/llms-full.txt`]({{ '/llms-full.txt' | relative_url }}) with a short
+  [`/llms.txt`]({{ '/llms.txt' | relative_url }}) index ([llms.txt](https://llmstxt.org/)
+  convention). Generated at build time by `_plugins/ai_context.rb`, so it always matches the
+  published site. Tooling only — no results changed.
 - **2026-05-29** — **Added a [Code Review](code-review.html) page (codebase audit).** A
   static, sourced read of the `multi_LigandDiff` repo asking two things: where the
   validity/sampling pipeline can be wrong, and the cheapest changes toward a positive de-novo

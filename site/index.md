@@ -90,3 +90,4 @@ Log](experiment-log.html) for the full run table.
 | [Strategy](strategy.html) | The two-track roadmap (publish the finding now; build a coordination-aware platform next). |
 | [Conclusions](conclusions.html) | The current conclusion and prioritized next steps. |
 | [Changelog](changelog.html) | Dated log of changes to this tracker. |
+| [AI Context](ai-context.html) | The whole tracker as one Markdown document — copy it or download `.md` to paste into an LLM. Also at [`/llms-full.txt`]({{ '/llms-full.txt' | relative_url }}). |
